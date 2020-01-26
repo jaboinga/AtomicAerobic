@@ -4,10 +4,10 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="sign_up">Sign Up</string>
-    <string name="first_name_hint">First Name</string>
-    <string name="last_name_hint">Last Name</string>
-    <string name="email_hint">Email</string>
-    <string name="password_hint">Password</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
     <string name="already_have_an_account">Already have an account?</string>
     <string name="log_in">Log In</string>
     <string name="testing">Testing</string>
@@ -15,4 +15,6 @@
     <string name="add_a_blockout_time">Add a Blockout Time</string>
     <string name="done">Done</string>
     <string name="space" />
+    <string name="username">Username</string>
+    <string name="dont_have_an_account">Don\'t have an account?</string>
 </resources>

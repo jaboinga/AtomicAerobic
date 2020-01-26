@@ -8,4 +8,9 @@
     <color name="colorMossGreen">#6f8f6a</color>
     <color name="colorDarkPink">#fd9394</color>
     <color name="colorLightPink">#ffe0d1</color>
+
+    <color name="lightYellow">#DBD8C3</color>
+    <color name="darkBlue">#1B4965</color>
+    <color name="ghostWhite">#F7F7FF</color>
+    <color name="salmon">#FF928B</color>
 </resources>

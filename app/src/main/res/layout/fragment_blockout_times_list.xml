@@ -11,9 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/blockout_times"
-        android:textSize="36sp"
-        android:textStyle="bold"
-        android:textColor="@color/colorDarkPink"/>
+        style="@style/TitleStyling"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/blockout_times_recycler_view"
@@ -27,21 +25,18 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="20dp">
+
         <Button
             android:id="@+id/blockout_times_add_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/add_a_blockout_time"
-            android:textColor="@color/colorMossGreen"
-            android:background="@color/colorLightPink"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textAllCaps="false" />
+            style="@style/ButtonStyling" />
 
+<!--        TODO: Kaelyn what is this-->
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/colorBackground"
             android:textSize="24sp"
             android:text="@string/space"/>
 
@@ -51,11 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/done"
-            android:textColor="@color/colorMossGreen"
-            android:background="@color/colorLightPink"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textAllCaps="false"/>
+            style="@style/ButtonStyling"/>
     </LinearLayout>
 
 

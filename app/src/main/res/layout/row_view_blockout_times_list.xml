@@ -5,14 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
-    card_view:cardCornerRadius="8dp">
+    >
+<!--    TODO: This doesn't seem to work on Rebecca's machine-->
+<!--    card_view:cardCornerRadius="8dp"-->
 
     <LinearLayout
         android:id="@+id/question_row"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-
 
         <ImageView
             android:id="@+id/blockout_times_delete_icon"
