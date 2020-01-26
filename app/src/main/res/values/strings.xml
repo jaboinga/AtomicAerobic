@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">Atomic Aerobic</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="first_name_hint">First Name</string>
+    <string name="last_name_hint">Last Name</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="already_have_an_account">Already have an account?</string>
+    <string name="log_in">Log In</string>
+    <string name="testing">Testing</string>
+    <string name="blockout_times">Blockout Times</string>
+    <string name="add_a_blockout_time">Add a Blockout Time</string>
+    <string name="done">Done</string>
+    <string name="space" />
 </resources>
