@@ -33,5 +33,11 @@
     <string-array name="time_units">
         <item>seconds</item>
         <item>minutes</item>
+	</string-array>
+    <string name="start_time">"Start Time: "</string>
+    <string name="end_time">"End Time:   "</string>
+    <string name="keep_up_the_good_work">Keep up the good work!</string>
+    <string-array name="time_array">
+        <item>AM</item>
     </string-array>
 </resources>

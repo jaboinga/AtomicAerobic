@@ -10,7 +10,7 @@
         android:id="@+id/progress_bar"
         style="?android:progressBarStyleHorizontal"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="350dp"
         android:progress="69"
         android:progressDrawable="@drawable/circle"
         android:rotation="270" />
@@ -18,7 +18,7 @@
     <!--    TODO: write logic to populate this and the progressbar-->
     <TextView
         android:id="@+id/progress_text_view"
-        style="@style/SmallTextStyle"
+        style="@style/TitleStyling"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/progress_bar"
@@ -98,5 +98,15 @@
                 android:text="this blockout ends" />
         </LinearLayout>
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/motivational_message"
+        style="@style/SmallTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/stats_row"
+        android:layout_margin="20dp"
+        android:layout_centerHorizontal="true"
+        android:text="@string/keep_up_the_good_work" />
 
 </RelativeLayout>
