@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/darkBlue"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="?android:progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:progress="69"
+        android:progressDrawable="@drawable/circle"
+        android:rotation="270" />
+
+    <!--    TODO: write logic to populate this and the progressbar-->
+    <TextView
+        android:id="@+id/progress_text_view"
+        style="@style/SmallTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/progress_bar"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="8dp"
+        android:text="XX% done" />
+
+    <RelativeLayout
+        android:id="@+id/stats_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/progress_text_view">
+
+        <LinearLayout
+            android:id="@+id/interval_box"
+            style="@style/BoxStyling"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/intervals_left_text"
+                style="@style/BoxLargeTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3" />
+
+            <TextView
+                android:id="@+id/intervals_left_description"
+                style="@style/BoxSmallTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/intervals_left" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/time_box"
+            style="@style/BoxStyling"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/time_left_text"
+                style="@style/BoxLargeTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="30" />
+
+            <TextView
+                android:id="@+id/time_left_description"
+                style="@style/BoxSmallTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="more minutes" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/blockout_box"
+            style="@style/BoxStyling"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/next_blockout_text"
+                style="@style/BoxLargeTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="12:00 pm" />
+
+            <TextView
+                android:id="@+id/next_blockout_description"
+                style="@style/BoxSmallTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="this blockout ends" />
+        </LinearLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

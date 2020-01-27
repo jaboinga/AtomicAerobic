@@ -8,7 +8,6 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-
     <style name="ButtonStyling">
         <item name="android:background">@color/lightYellow</item>
         <item name="android:textColor">@color/darkBlue</item>
@@ -36,6 +35,21 @@
     <style name="SmallLinkStyle">
         <item name="android:textColor">@color/salmon</item>
         <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="BoxStyling">
+        <item name="android:background">@color/lightYellow</item>
+        <item name="android:layout_margin">4dp</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:layout_width">125dp</item>
+    </style>
+
+    <style name="BoxLargeTextStyle">
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="BoxSmallTextStyle">
+        <item name="android:textSize">12sp</item>
     </style>
 
 </resources>

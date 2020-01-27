@@ -1,4 +1,4 @@
-package edu.rosehulman.dummitrj.atomicaerobic
+package edu.rosehulman.bockkedummitrj.atomicaerobic
 
 import org.junit.Test
 
