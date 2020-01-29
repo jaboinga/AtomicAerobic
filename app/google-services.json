@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "945725088845",
+    "firebase_url": "https://bockke-dummitrj-atomic-aerobic.firebaseio.com",
+    "project_id": "bockke-dummitrj-atomic-aerobic",
+    "storage_bucket": "bockke-dummitrj-atomic-aerobic.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:945725088845:android:1058ac5d9a3a43e667e804",
+        "android_client_info": {
+          "package_name": "edu.rosehulman.bockkedummitrj.atomicaerobic"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "945725088845-2fbf3vr8hp7r0ivsdfrtccgb9uqjsn9n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.rosehulman.bockkedummitrj.atomicaerobic",
+            "certificate_hash": "8fd34cecdf54882ba3a7a3ab0a39b6a753af1b09"
+          }
+        },
+        {
+          "client_id": "945725088845-nkavkcuh0vbado6c44q82a3g88tvt7kb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCql8809JjmaYJhqmLUbI13M-DqHQ_sEcw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "945725088845-nkavkcuh0vbado6c44q82a3g88tvt7kb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
