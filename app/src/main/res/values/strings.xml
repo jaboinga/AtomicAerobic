@@ -41,4 +41,5 @@
     <string-array name="time_array">
         <item>AM</item>
     </string-array>
+    <string name="logout">Logout</string>
 </resources>
