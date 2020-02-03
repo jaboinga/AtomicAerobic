@@ -10,6 +10,7 @@ import com.google.firebase.auth.FirebaseAuth
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.SplashFragment
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.blockouttimes.BlockoutTimeAdapter
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.blockouttimes.BlockoutTimesFragment
+import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.blockouttimes.BlockoutTimesRecyclerViewFragment
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.dashboard.DashboardFragment
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.settings.SettingsFragment
 
@@ -19,6 +20,7 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
     private val RC_SIGN_IN = 1
     private val auth = FirebaseAuth.getInstance()
     lateinit var authListener: FirebaseAuth.AuthStateListener
+    lateinit var adapter: BlockoutTimeAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,12 +33,13 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
         navView.setOnNavigationItemSelectedListener { item ->
 
             val ft = supportFragmentManager.beginTransaction()
+            adapter = BlockoutTimeAdapter(this, auth.currentUser!!.uid)
             when (item.itemId) {
                 R.id.dashboard_icon -> ft.replace(R.id.fragment_container, DashboardFragment())
                 R.id.settings_icon -> ft.replace(R.id.fragment_container, SettingsFragment())
                 R.id.blockout_icon -> ft.replace(
                     R.id.fragment_container,
-                    BlockoutTimesFragment(BlockoutTimeAdapter(this))
+                    BlockoutTimesFragment(adapter)
                 )
                 else -> super.onOptionsItemSelected(item)
             }
@@ -70,6 +73,10 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
 
             R.id.action_logout -> {
                 logoutUser()
+                true
+            }
+            R.id.action_add_blockout_time -> {
+                adapter.showAddDialog()
                 true
             }
             else -> super.onOptionsItemSelected(item)

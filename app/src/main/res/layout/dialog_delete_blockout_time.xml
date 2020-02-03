@@ -9,5 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/blockout_time_delete_dialog"
+        style="@style/SmallTextStyle"
+        android:textColor="@color/black"
+        android:layout_margin="20dp"
         />
 </LinearLayout>

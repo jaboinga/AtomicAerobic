@@ -25,9 +25,10 @@ class BlockoutTimesRecyclerViewFragment(private var adapter: BlockoutTimeAdapter
 //        blockoutTimesViewModel.text.observe(this, Observer {
 ////            textView.text = it
 //        })
-            val recyclerView =  inflater.inflate(R.layout.fragment_blockout_times_list, container, false) as RecyclerView
+            val recyclerView =  inflater.inflate(R.layout.blockout_times_recycler_view, container, false) as RecyclerView
             recyclerView.adapter = adapter
             recyclerView.layoutManager = LinearLayoutManager(context)
             return recyclerView
+
         }
     }

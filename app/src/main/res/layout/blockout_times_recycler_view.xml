@@ -3,7 +3,8 @@
     android:id="@+id/blockout_times_recycler_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/darker_gray"
+    android:background="@color/darkBlue"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
 </androidx.recyclerview.widget.RecyclerView>
+

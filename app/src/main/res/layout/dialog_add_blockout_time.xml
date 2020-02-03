@@ -6,13 +6,6 @@
     android:background="@color/darkBlue"
     android:orientation="vertical">
 
-<!--    <TextView-->
-<!--        android:id="@+id/add_blockout_time_title"-->
-<!--        style="@style/TitleStyling"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="@string/add_a_blockout_time" />-->
-
     <LinearLayout
         android:id="@+id/start_time_block"
         android:layout_width="match_parent"

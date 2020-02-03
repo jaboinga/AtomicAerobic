@@ -7,15 +7,17 @@ import com.google.firebase.firestore.ServerTimestamp
 
 data class BlockoutTime(
     var startTime: String? = "",
+    var startTimePeriod: String? = "",
     var endTime: String? = "",
-    var timePeriod: String? = "",
+    var endTimePeriod: String? = "",
     var userId: String? = ""
-){
+) {
 
     @get:Exclude
     var id = ""
     @ServerTimestamp
     var creation: Timestamp? = null
+
     companion object {
         const val CREATION_KEY = "creation"
         fun fromSnapshot(snapshot: DocumentSnapshot): BlockoutTime {
