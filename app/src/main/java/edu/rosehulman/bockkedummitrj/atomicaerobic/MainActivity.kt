@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
             adapter = BlockoutTimeAdapter(this, auth.currentUser!!.uid)
             when (item.itemId) {
                 R.id.dashboard_icon -> ft.replace(R.id.fragment_container, DashboardFragment())
-                R.id.settings_icon -> ft.replace(R.id.fragment_container, SettingsFragment())
+                R.id.settings_icon -> ft.replace(R.id.fragment_container, SettingsFragment(adapter.userId))
                 R.id.blockout_icon -> ft.replace(
                     R.id.fragment_container,
                     BlockoutTimesFragment(adapter)
