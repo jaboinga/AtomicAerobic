@@ -5,9 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import edu.rosehulman.bockkedummitrj.atomicaerobic.R
+import kotlinx.android.synthetic.main.blockout_times_recycler_view.view.*
 
-class BlockoutTimesFragment : Fragment() {
+class BlockoutTimesFragment(private var adapter: BlockoutTimeAdapter) : Fragment() {
 
     private lateinit var blockoutTimesViewModel: BlockoutTimesViewModel
 
@@ -23,6 +26,9 @@ class BlockoutTimesFragment : Fragment() {
 //        blockoutTimesViewModel.text.observe(this, Observer {
 ////            textView.text = it
 //        })
-        return inflater.inflate(R.layout.fragment_blockout_times_list, container, false)
+        val view = inflater.inflate(R.layout.fragment_blockout_times_list, container, false)
+        view.blockout_times_recycler_view.adapter = adapter
+        view.blockout_times_recycler_view.layoutManager = LinearLayoutManager(context)
+        return  view
     }
 }
