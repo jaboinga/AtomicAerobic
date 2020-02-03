@@ -8,6 +8,7 @@ import com.firebase.ui.auth.AuthUI
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.SplashFragment
+import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.blockouttimes.BlockoutTimeAdapter
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.blockouttimes.BlockoutTimesFragment
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.dashboard.DashboardFragment
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.settings.SettingsFragment
@@ -35,7 +36,7 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
                 R.id.settings_icon -> ft.replace(R.id.fragment_container, SettingsFragment())
                 R.id.blockout_icon -> ft.replace(
                     R.id.fragment_container,
-                    BlockoutTimesFragment()
+                    BlockoutTimesFragment(BlockoutTimeAdapter(this))
                 )
                 else -> super.onOptionsItemSelected(item)
             }
