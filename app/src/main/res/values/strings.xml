@@ -31,8 +31,8 @@
     <string name="total_time">Total Time (minutes):</string>
     <string name="time_per_session">Time per session:</string>
     <string-array name="time_units">
-        <item>seconds</item>
-        <item>minutes</item>
+        <item name="seconds">seconds</item>
+        <item name="minutes">minutes</item>
 	</string-array>
     <string name="start_time">"Start Time: "</string>
     <string name="end_time">"End Time:   "</string>

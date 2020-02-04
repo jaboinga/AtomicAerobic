@@ -2,12 +2,13 @@ package edu.rosehulman.bockkedummitrj.atomicaerobic.ui.settings
 
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Exclude
+import edu.rosehulman.bockkedummitrj.atomicaerobic.Constants
 
 data class Setting(
     var randomization: Boolean = false,
-    var timePerSession: Int = 0,
+    var timePerSession: Int = Constants.DEFAULT_TIME_PER_SESSION,
     var timePerSessionUnit: String = "minutes",
-    var totalTime: Int = 0,
+    var totalTime: Int = Constants.DEFAULT_TOTAL_TIME,
     var userId: String = "",
     var workoutArms: Boolean = true,
     var workoutCardio: Boolean = true,
