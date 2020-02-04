@@ -20,7 +20,7 @@ class BlockoutTimesFragment(private var adapter: BlockoutTimeAdapter) : Fragment
     ): View? {
         val view = inflater.inflate(R.layout.fragment_blockout_times_list, container, false)
         view.blockout_times_recycler_view.adapter = adapter
-        view.blockout_times_recycler_view.layoutManager = LinearLayoutManager(context)
+        view.blockout_times_recycler_view.layoutManager = LinearLayoutManager(activity)
         view.blockout_times_recycler_view.setHasFixedSize(false)
         view.blockout_times_add_button.setOnClickListener(adapter.showAddDialog())
         return  view

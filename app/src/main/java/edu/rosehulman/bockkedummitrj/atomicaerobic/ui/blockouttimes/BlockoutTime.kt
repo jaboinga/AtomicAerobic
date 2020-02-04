@@ -6,11 +6,11 @@ import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.ServerTimestamp
 
 data class BlockoutTime(
-    var startTime: String? = "",
-    var startTimePeriod: String? = "",
-    var endTime: String? = "",
-    var endTimePeriod: String? = "",
-    var userId: String? = ""
+    var startHour: Int = 0,
+    var startMinutes: Int = 0,
+    var endHour: Int = 0,
+    var endMinutes: Int = 0,
+    var userId: String = ""
 ) {
 
     @get:Exclude

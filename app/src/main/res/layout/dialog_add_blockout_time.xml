@@ -22,19 +22,19 @@
             android:textColor="@android:color/white" />
 
 
-        <EditText
-            android:id="@+id/add_blockout_start_time_edit_text"
-            style="@style/EditTextStyling"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content" />
-
-        <Spinner
-            android:id="@+id/spinner_start"
+        <TimePicker
+            android:id="@+id/add_blockout_start_time_spinner"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:background="@color/lightYellow"
-            android:entries="@array/time_array" />
+            android:layout_height="100dp"
+            android:timePickerMode="spinner"/>
+
+<!--        <Spinner-->
+<!--            android:id="@+id/spinner_start"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="10dp"-->
+<!--            android:background="@color/lightYellow"-->
+<!--            android:entries="@array/time_array" />-->
 
     </LinearLayout>
 
@@ -53,20 +53,20 @@
             android:text="@string/end_time"
             android:textColor="@android:color/white" />
 
-        <EditText
-            android:id="@+id/add_blockout_end_time_edit_text"
-            style="@style/EditTextStyling"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content" />
-
-
-        <Spinner
-            android:id="@+id/spinner_end"
+        <TimePicker
+            android:id="@+id/add_blockout_end_time_spinner"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:background="@color/lightYellow"
-            android:entries="@array/time_array" />
+            android:layout_height="100dp"
+            android:timePickerMode="spinner" />
+
+
+<!--        <Spinner-->
+<!--            android:id="@+id/spinner_end"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="10dp"-->
+<!--            android:background="@color/lightYellow"-->
+<!--            android:entries="@array/time_array" />-->
 
     </LinearLayout>
 

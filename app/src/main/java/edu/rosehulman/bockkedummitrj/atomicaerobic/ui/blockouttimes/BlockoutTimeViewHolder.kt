@@ -14,6 +14,6 @@ class BlockoutTimeViewHolder(itemView: View, adapter: BlockoutTimeAdapter): Recy
     }
 
     fun bind(blockoutTime: BlockoutTime){
-        itemView.blockout_times_time_text.text = "${blockoutTime.startTime} ${blockoutTime.startTimePeriod} to ${blockoutTime.endTime} ${blockoutTime.endTimePeriod}"
+        itemView.blockout_times_time_text.text = "${blockoutTime.startHour}:${blockoutTime.startMinutes} to ${blockoutTime.endHour}:${blockoutTime.endMinutes}"
     }
 }

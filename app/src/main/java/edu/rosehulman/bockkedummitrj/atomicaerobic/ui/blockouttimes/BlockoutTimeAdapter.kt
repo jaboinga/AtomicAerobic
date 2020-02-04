@@ -17,8 +17,6 @@ import kotlinx.android.synthetic.main.dialog_add_blockout_time.view.*
 
 class BlockoutTimeAdapter(var context: Context?, var userId: String) :
     RecyclerView.Adapter<BlockoutTimeViewHolder>() {
-
-
     private val blockoutTimes = ArrayList<BlockoutTime>()
 
     private val blockoutTimesRef =
@@ -97,12 +95,13 @@ class BlockoutTimeAdapter(var context: Context?, var userId: String) :
 
             builder.setPositiveButton(android.R.string.ok) { _, _ ->
                 val time = BlockoutTime(
-                    view.add_blockout_start_time_edit_text.text.toString(),
-                    view.spinner_start.selectedItem.toString(),
-                    view.add_blockout_end_time_edit_text.text.toString(),
-                    view.spinner_end.selectedItem.toString(),
+                    view.add_blockout_start_time_spinner.currentHour,
+                    view.add_blockout_start_time_spinner.currentMinute,
+                    view.add_blockout_end_time_spinner.currentHour,
+                    view.add_blockout_end_time_spinner.currentMinute,
                     userId
                 )
+                //TODO fix the am pm stuff
                 add(time)
 
                 //TODO: figure out why this isn't updating in the view immediately
