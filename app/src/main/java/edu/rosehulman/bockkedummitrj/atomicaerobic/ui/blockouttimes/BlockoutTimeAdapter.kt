@@ -26,6 +26,7 @@ class BlockoutTimeAdapter(var context: Context?, var userId: String) :
 
     init {
         blockoutTimesRef
+            .whereEqualTo("userId", userId)
             .addSnapshotListener { snapshot: QuerySnapshot?, exception: FirebaseFirestoreException? ->
                 if (exception != null) {
                     Log.e(Constants.TAG, "Listen error: $exception")
