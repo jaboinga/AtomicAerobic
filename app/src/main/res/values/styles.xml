@@ -68,4 +68,9 @@
     <style name="SpinnerStyle">
         <item name="android:background">@color/lightYellow</item>
     </style>
+
+    <style name="DialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:background">@color/darkBlue</item>
+        <item name="android:textColor">@color/basketballOrange</item>
+    </style>
 </resources>

@@ -87,7 +87,7 @@ class BlockoutTimeAdapter(var context: Context?, var userId: String) :
 
     fun showAddDialog() : View.OnClickListener{
         return View.OnClickListener {
-            val builder = AlertDialog.Builder(context!!)
+            val builder = AlertDialog.Builder(context!!, R.style.DialogStyle)
 
             val view =
                 LayoutInflater.from(context).inflate(R.layout.dialog_add_blockout_time, null, false)
@@ -101,10 +101,11 @@ class BlockoutTimeAdapter(var context: Context?, var userId: String) :
                     view.add_blockout_end_time_spinner.currentMinute,
                     userId
                 )
-                //TODO fix the am pm stuff
                 add(time)
 
                 //TODO: figure out why this isn't updating in the view immediately
+                // Dr. Boutell please help: we can't figure out why our recycler view isn't updating on an add here
+                // The data does persist in the database after you change the fragment, but it just doesn't update immediately
             }
 
             builder.setNegativeButton(android.R.string.cancel, null)
