@@ -20,6 +20,7 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
     private val auth = FirebaseAuth.getInstance()
     lateinit var authListener: FirebaseAuth.AuthStateListener
     lateinit var adapter: BlockoutTimeAdapter
+    lateinit var workoutManager: WorkoutManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +35,7 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
             val ft = supportFragmentManager.beginTransaction()
             adapter = BlockoutTimeAdapter(this, auth.currentUser!!.uid)
             when (item.itemId) {
-                R.id.dashboard_icon -> ft.replace(R.id.fragment_container, DashboardFragment())
+                R.id.dashboard_icon -> ft.replace(R.id.fragment_container, DashboardFragment(workoutManager))
                 R.id.settings_icon -> ft.replace(R.id.fragment_container, SettingsFragment(adapter.userId))
                 R.id.blockout_icon -> ft.replace(
                     R.id.fragment_container,
@@ -94,6 +95,8 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
         authListener = FirebaseAuth.AuthStateListener {
             val user = it.currentUser
             if (user != null) {
+                //TODO is this going to be a problem later? we need the workouts to persist
+                workoutManager = WorkoutManager(user.uid)
                 switchToDashboard()
             } else {
                 switchToSplashFragment()
@@ -109,7 +112,7 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
 
     private fun switchToDashboard() {
         val ft = supportFragmentManager.beginTransaction()
-        ft.replace(R.id.fragment_container, DashboardFragment())
+        ft.replace(R.id.fragment_container, DashboardFragment(workoutManager))
         ft.commit()
     }
 

@@ -14,6 +14,11 @@ class BlockoutTimeViewHolder(itemView: View, adapter: BlockoutTimeAdapter): Recy
     }
 
     fun bind(blockoutTime: BlockoutTime){
-        itemView.blockout_times_time_text.text = "${blockoutTime.startHour}:${blockoutTime.startMinutes} to ${blockoutTime.endHour}:${blockoutTime.endMinutes}"
+        var startMinutesString = blockoutTime.startMinutes.toString()
+        var endMinutesString = blockoutTime.endMinutes.toString()
+        if(blockoutTime.startMinutes < 10) startMinutesString = "0" + blockoutTime.startMinutes.toString()
+        if(blockoutTime.endMinutes < 10) endMinutesString = "0" + blockoutTime.endMinutes.toString()
+
+        itemView.blockout_times_time_text.text = "${blockoutTime.startHour}:${startMinutesString} to ${blockoutTime.endHour}:${endMinutesString}"
     }
 }
