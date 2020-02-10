@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import edu.rosehulman.bockkedummitrj.atomicaerobic.R
 import edu.rosehulman.bockkedummitrj.atomicaerobic.WorkoutManager
 import kotlinx.android.synthetic.main.fragment_dashboard.view.*
+import java.util.*
 
 
 class DashboardFragment(var workoutManager: WorkoutManager) : Fragment() {
@@ -23,9 +24,20 @@ class DashboardFragment(var workoutManager: WorkoutManager) : Fragment() {
         root.progress_text_view.setText(workoutManager.getPercentCompleted().toString() + "% done")
         root.intervals_left_text.setText(workoutManager.getIntervalsLeft().toString())
         root.time_left_text.setText(workoutManager.getTimeLeft().toString())
-        //TODO change description from minutes to seconds depending
-        //TODO update the blockout time box
+        val currentTime = Calendar.getInstance().getTime()
+        if(workoutManager.inBlockoutTime(currentTime)){
+            var currentBlockoutTime = workoutManager.getCurrentBlockoutTime()
+            root.next_blockout_text.setText(currentBlockoutTime!!.endHour.toString() + ":" + currentBlockoutTime!!.endMinutes.toString())
+            root.next_blockout_description.setText("this blockout ends")
+        }else{
+            var nextBlockoutTime = workoutManager.getNextBlockoutTime()
+            root.next_blockout_text.setText(nextBlockoutTime.startHour.toString() + ":" + nextBlockoutTime.startMinutes.toString())
+            root.next_blockout_description.setText("next blockout time")
+        }
+
         //TODO randomize the motivational statement
         return root
     }
+
+    on
 }

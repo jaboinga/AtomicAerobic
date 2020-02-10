@@ -7,6 +7,9 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.QuerySnapshot
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.blockouttimes.BlockoutTime
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.settings.Setting
+import java.util.*
+import kotlin.collections.ArrayList
+
 
 class WorkoutManager(var userId: String) {
 
@@ -101,6 +104,56 @@ class WorkoutManager(var userId: String) {
         }
     }
 
+    fun inBlockoutTime(currentTime : Date): Boolean {
+        blockoutTimes.forEach { time ->
+            if (time.withinTime(currentTime)) return true
+        }
+        return false
+    }
+
+    fun getCurrentBlockoutTime() : BlockoutTime?{
+        val currentTime = Calendar.getInstance().getTime()
+        blockoutTimes.sortWith(kotlin.Comparator { first, second ->
+            if (first.startHour == second.startHour) {
+                first.startMinutes - second.startMinutes
+            } else {
+                first.startHour - second.startHour
+            }
+        })
+
+        for(time in blockoutTimes){
+            if(time.withinTime(currentTime)) return time
+        }
+
+        return null
+    }
+
+    fun getNextBlockoutTime() : BlockoutTime{
+        val currentTime = Calendar.getInstance().getTime()
+        blockoutTimes.sortWith(kotlin.Comparator { first, second ->
+            if (first.startHour == second.startHour) {
+                first.startMinutes - second.startMinutes
+            } else {
+                first.startHour - second.startHour
+            }
+        })
+
+        for(time in blockoutTimes){
+            if(time.startHour == currentTime.hours){
+                if(time.startMinutes > currentTime.minutes){
+                    return time
+                }
+            } else if(time.startHour > currentTime.hours){
+                return time
+            }
+
+        }
+
+        return blockoutTimes.first()
+    }
+
+
+
     private fun getPossibleWorkouts(): List<String> {
         var workouts = ArrayList<String>()
 
@@ -131,6 +184,7 @@ class WorkoutManager(var userId: String) {
         return (totalSessions - completedSessions)
     }
 
+    //always in minutes
     fun getTimeLeft(): Int {
         var timeLeft =
             ((totalSessions * setting.timePerSession) - ((totalSessions - getIntervalsLeft()) * setting.timePerSession)).toInt()

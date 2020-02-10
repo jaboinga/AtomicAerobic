@@ -97,7 +97,6 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
             if (user != null) {
                 //TODO is this going to be a problem later? we need the workouts to persist
                 workoutManager = WorkoutManager(user.uid)
-                switchToDashboard()
             } else {
                 switchToSplashFragment()
             }
@@ -107,12 +106,6 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
     private fun switchToSplashFragment() {
         val ft = supportFragmentManager.beginTransaction()
         ft.replace(R.id.fragment_container, SplashFragment())
-        ft.commit()
-    }
-
-    private fun switchToDashboard() {
-        val ft = supportFragmentManager.beginTransaction()
-        ft.replace(R.id.fragment_container, DashboardFragment(workoutManager))
         ft.commit()
     }
 
