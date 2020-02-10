@@ -1,5 +1,6 @@
 package edu.rosehulman.bockkedummitrj.atomicaerobic.ui.blockouttimes
 
+import android.util.Log
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Exclude
@@ -15,6 +16,19 @@ data class BlockoutTime(
 ) {
 
     fun withinTime(time: Date): Boolean {
+        Log.wtf("after", time.after(
+            Date(
+                time.year,
+                time.month,
+                time.day,
+                startHour,
+                startMinutes
+            )).toString())
+
+        Log.wtf("before", (time.before(Date(time.year, time.month, time.day, endHour, endMinutes)).toString()))
+
+        Log.wtf("current hour", time.hours.toString())
+
         return time.after(
             Date(
                 time.year,
@@ -24,6 +38,7 @@ data class BlockoutTime(
                 startMinutes
             )
         ) && time.before(Date(time.year, time.month, time.day, endHour, endMinutes))
+
     }
 
     @get:Exclude
