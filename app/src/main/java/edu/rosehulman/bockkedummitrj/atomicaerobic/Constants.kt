@@ -7,6 +7,10 @@ object Constants {
     const val DEFAULT_TOTAL_TIME = 60
     const val DEFAULT_TIME_PER_SESSION = 10
 
+    const val CHANNEL_ID = "edu.rosehulman.bockkedummitrj.atomicaerobic"
+    const val FRAGMENT_TAG = "fragment"
+    const val WORKOUT_TIMER_TAG = "workoutTimerFragment"
+
     val armWorkouts: List<String> = listOf<String>(
         "Windmills",
         "Pushups",

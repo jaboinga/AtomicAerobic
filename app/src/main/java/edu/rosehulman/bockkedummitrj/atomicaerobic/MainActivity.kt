@@ -1,5 +1,10 @@
 package edu.rosehulman.bockkedummitrj.atomicaerobic
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -8,10 +13,12 @@ import com.firebase.ui.auth.AuthUI
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.SplashFragment
+import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.WorkoutTimerFragment
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.blockouttimes.BlockoutTimeAdapter
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.blockouttimes.BlockoutTimesFragment
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.dashboard.DashboardFragment
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.settings.SettingsFragment
+
 
 class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedListener {
 
@@ -21,10 +28,14 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
     lateinit var authListener: FirebaseAuth.AuthStateListener
     lateinit var adapter: BlockoutTimeAdapter
     lateinit var workoutManager: WorkoutManager
+    lateinit var notificationManager: NotificationManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        createNotificationChannel()
 
         initializeListeners()
 
@@ -35,8 +46,14 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
             val ft = supportFragmentManager.beginTransaction()
             adapter = BlockoutTimeAdapter(this, auth.currentUser!!.uid)
             when (item.itemId) {
-                R.id.dashboard_icon -> ft.replace(R.id.fragment_container, DashboardFragment(workoutManager))
-                R.id.settings_icon -> ft.replace(R.id.fragment_container, SettingsFragment(adapter.userId))
+                R.id.dashboard_icon -> ft.replace(
+                    R.id.fragment_container,
+                    DashboardFragment(workoutManager)
+                )
+                R.id.settings_icon -> ft.replace(
+                    R.id.fragment_container,
+                    SettingsFragment(adapter.userId)
+                )
                 R.id.blockout_icon -> ft.replace(
                     R.id.fragment_container,
                     BlockoutTimesFragment(adapter)
@@ -44,7 +61,19 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
                 else -> super.onOptionsItemSelected(item)
             }
             ft.commit()
+            //TODO remove this
+            notifyNow()
             true
+        }
+
+        val fragment = intent.getStringExtra(Constants.FRAGMENT_TAG)
+        if (fragment != null) {
+            if (fragment == Constants.WORKOUT_TIMER_TAG) {
+                val ft = supportFragmentManager.beginTransaction()
+                //TODO change to workout
+                ft.replace(R.id.fragment_container, WorkoutTimerFragment(Interval("Windmills", 3, 45, 450)))
+                ft.commit()
+            }
         }
 
     }
@@ -96,7 +125,7 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
             val user = it.currentUser
             if (user != null) {
                 //TODO is this going to be a problem later? we need the workouts to persist
-                workoutManager = WorkoutManager(user.uid)
+                workoutManager = WorkoutManager(user.uid, this)
             } else {
                 switchToSplashFragment()
             }
@@ -119,5 +148,22 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
                 .build()
         startActivityForResult(loginIntent, RC_SIGN_IN)
 
+    }
+
+    private fun createNotificationChannel() {
+        val importance = NotificationManager.IMPORTANCE_HIGH
+        val channel = NotificationChannel(Constants.CHANNEL_ID, getString(R.string.app_name), importance)
+        channel.enableLights(true)
+        channel.lightColor = Color.BLUE
+        channel.enableVibration(true)
+        channel.vibrationPattern = longArrayOf(100, 200, 300, 400, 500, 400, 300, 200, 400)
+        notificationManager.createNotificationChannel(channel)
+    }
+
+    private fun notifyNow() {
+        val displayIntent = Intent(this, MainActivity::class.java)
+        displayIntent.putExtra(Constants.FRAGMENT_TAG, Constants.WORKOUT_TIMER_TAG)
+        val notification = workoutManager.getNotification(displayIntent)
+        notificationManager.notify(101, notification)
     }
 }

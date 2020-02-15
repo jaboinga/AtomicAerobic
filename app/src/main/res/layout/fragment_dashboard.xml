@@ -15,7 +15,6 @@
         android:progressDrawable="@drawable/circle"
         android:rotation="270" />
 
-    <!--    TODO: write logic to populate this and the progressbar-->
     <TextView
         android:id="@+id/progress_text_view"
         style="@style/TitleStyling"

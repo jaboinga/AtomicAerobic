@@ -1,5 +1,9 @@
 package edu.rosehulman.bockkedummitrj.atomicaerobic
 
+import android.app.Notification
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.util.Log
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
@@ -11,7 +15,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class WorkoutManager(var userId: String) {
+class WorkoutManager(var userId: String, var context: Context) {
 
     private var setting: Setting = Setting()
     private var blockoutTimes: ArrayList<BlockoutTime> = ArrayList()
@@ -95,23 +99,23 @@ class WorkoutManager(var userId: String) {
                 12,
                 0,
                 if (setting.timePerSessionUnit == "seconds") {
-                    setting.timePerSession
+                    setting.timePerSession.toLong()
                 } else {
-                    setting.timePerSession * 60
+                    (setting.timePerSession * 60).toLong()
                 }
             )
             intervals.add(interval)
         }
     }
 
-    fun inBlockoutTime(currentTime : Date): Boolean {
+    fun inBlockoutTime(currentTime: Date): Boolean {
         blockoutTimes.forEach { time ->
             if (time.withinTime(currentTime)) return true
         }
         return false
     }
 
-    fun getCurrentBlockoutTime() : BlockoutTime?{
+    fun getCurrentBlockoutTime(): BlockoutTime? {
         val currentTime = Calendar.getInstance().getTime()
         blockoutTimes.sortWith(kotlin.Comparator { first, second ->
             if (first.startHour == second.startHour) {
@@ -121,14 +125,14 @@ class WorkoutManager(var userId: String) {
             }
         })
 
-        for(time in blockoutTimes){
-            if(time.withinTime(currentTime)) return time
+        for (time in blockoutTimes) {
+            if (time.withinTime(currentTime)) return time
         }
 
         return null
     }
 
-    fun getNextBlockoutTime() : BlockoutTime{
+    fun getNextBlockoutTime(): BlockoutTime {
         val currentTime = Calendar.getInstance().getTime()
         blockoutTimes.sortWith(kotlin.Comparator { first, second ->
             if (first.startHour == second.startHour) {
@@ -138,12 +142,12 @@ class WorkoutManager(var userId: String) {
             }
         })
 
-        for(time in blockoutTimes){
-            if(time.startHour == currentTime.hours){
-                if(time.startMinutes > currentTime.minutes){
+        for (time in blockoutTimes) {
+            if (time.startHour == currentTime.hours) {
+                if (time.startMinutes > currentTime.minutes) {
                     return time
                 }
-            } else if(time.startHour > currentTime.hours){
+            } else if (time.startHour > currentTime.hours) {
                 return time
             }
 
@@ -151,7 +155,6 @@ class WorkoutManager(var userId: String) {
 
         return blockoutTimes.first()
     }
-
 
 
     private fun getPossibleWorkouts(): List<String> {
@@ -193,6 +196,18 @@ class WorkoutManager(var userId: String) {
             timeLeft /= 60
         }
         return timeLeft
+    }
+
+    fun getNotification(intent: Intent): Notification {
+        val builder = Notification.Builder(context, Constants.CHANNEL_ID)
+        builder.setContentTitle(context.getString(R.string.app_name))
+        builder.setContentText(context.getString(R.string.notification_message))
+        builder.setSmallIcon(R.drawable.weight_icon)
+        builder.setChannelId(Constants.CHANNEL_ID)
+        val pendingIntent =
+            PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        builder.setContentIntent(pendingIntent)
+        return builder.build()
     }
 
 }
