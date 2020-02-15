@@ -61,6 +61,7 @@ class WorkoutTimerFragment(var interval: Interval) : Fragment() {
     private fun onTimerFinished() {
         progressBar.progress = 0
         timerTextView.text = "Done!"
+        //TODO mark that the interval is completed
     }
 
 }

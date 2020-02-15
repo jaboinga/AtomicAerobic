@@ -144,7 +144,6 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
             AuthUI.getInstance()
                 .createSignInIntentBuilder()
                 .setAvailableProviders(providers)
-                //.setLogo(R.drawable.ic_launcher_custom)
                 .build()
         startActivityForResult(loginIntent, RC_SIGN_IN)
 
