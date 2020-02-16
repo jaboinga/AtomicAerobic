@@ -1,14 +1,18 @@
 package edu.rosehulman.bockkedummitrj.atomicaerobic
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
+import android.app.*
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.os.SystemClock
+import android.preference.PreferenceManager
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
 import com.firebase.ui.auth.AuthUI
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -18,6 +22,7 @@ import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.blockouttimes.BlockoutTime
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.blockouttimes.BlockoutTimesFragment
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.dashboard.DashboardFragment
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.settings.SettingsFragment
+import java.util.*
 
 
 class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedListener {
@@ -71,7 +76,8 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
             if (fragment == Constants.WORKOUT_TIMER_TAG) {
                 val ft = supportFragmentManager.beginTransaction()
                 //TODO change to workout
-                ft.replace(R.id.fragment_container, WorkoutTimerFragment(Interval("Windmills", 3, 45, 450)))
+                Log.d(Constants.TAG, "workout manager is: ${workoutManager.toString()}")
+                ft.replace(R.id.fragment_container, WorkoutTimerFragment(Interval("Windmills", 3, 45, 450), workoutManager))
                 ft.commit()
             }
         }
@@ -165,4 +171,6 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
         val notification = workoutManager.getNotification(displayIntent)
         notificationManager.notify(101, notification)
     }
+
+
 }

@@ -19,14 +19,16 @@ class WorkoutManager(var userId: String, var context: Context) {
 
     private var setting: Setting = Setting()
     private var blockoutTimes: ArrayList<BlockoutTime> = ArrayList()
+    var completedSessions: CompletedSessions = CompletedSessions()
     var totalSessions: Int = 500
-    var completedSessions: Int = 3 //TODO update this on completion
     var intervals: ArrayList<Interval> = ArrayList()
 
     private val settingsRef =
         FirebaseFirestore.getInstance().collection(Constants.SETTINGS_COLLECTION)
     private val blockoutTimesRef =
         FirebaseFirestore.getInstance().collection(Constants.BLOCKOUT_TIMES_COLLECTION)
+    private val completedSessionsRef =
+        FirebaseFirestore.getInstance().collection(Constants.COMPLETED_SESSIONS_COLLECTION)
 
     init {
         settingsRef
@@ -84,6 +86,27 @@ class WorkoutManager(var userId: String, var context: Context) {
                     }
                     //TODO: update the intervals if needed here
                 }
+            }
+        completedSessionsRef
+            .whereEqualTo("userId", userId)
+            .addSnapshotListener{snapshot: QuerySnapshot?, exception: FirebaseFirestoreException? ->
+                if (exception != null) {
+                    Log.wtf(Constants.TAG, "Listen error: $exception")
+                    return@addSnapshotListener
+                }
+
+                if (snapshot!!.documentChanges.size == 0) {
+                    completedSessions = CompletedSessions()
+                    completedSessions.userId = userId
+
+                }
+
+                for (docChange in snapshot!!.documentChanges) {
+                    val newCompletedSessions = CompletedSessions.fromSnapshot(docChange.document)
+                    completedSessions = newCompletedSessions
+
+                }
+
             }
     }
 
@@ -180,11 +203,11 @@ class WorkoutManager(var userId: String, var context: Context) {
     }
 
     fun getPercentCompleted(): Int {
-        return ((completedSessions * 100) / totalSessions).toInt()
+        return ((completedSessions.completedSessions * 100) / totalSessions).toInt()
     }
 
     fun getIntervalsLeft(): Int {
-        return (totalSessions - completedSessions)
+        return (totalSessions - completedSessions.completedSessions)
     }
 
     //always in minutes
@@ -208,6 +231,10 @@ class WorkoutManager(var userId: String, var context: Context) {
             PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         builder.setContentIntent(pendingIntent)
         return builder.build()
+    }
+
+    fun sessionCompleted() {
+        completedSessions.completedSessions++
     }
 
 }

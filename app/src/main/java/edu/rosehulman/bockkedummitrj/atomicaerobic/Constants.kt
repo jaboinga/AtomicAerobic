@@ -4,6 +4,7 @@ object Constants {
     const val TAG = "aa"
     const val BLOCKOUT_TIMES_COLLECTION = "blockout_times"
     const val SETTINGS_COLLECTION = "settings"
+    const val COMPLETED_SESSIONS_COLLECTION = "completed_sessions"
     const val DEFAULT_TOTAL_TIME = 60
     const val DEFAULT_TIME_PER_SESSION = 10
 

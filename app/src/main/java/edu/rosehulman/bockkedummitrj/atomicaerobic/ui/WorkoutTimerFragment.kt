@@ -10,9 +10,10 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import edu.rosehulman.bockkedummitrj.atomicaerobic.Interval
 import edu.rosehulman.bockkedummitrj.atomicaerobic.R
+import edu.rosehulman.bockkedummitrj.atomicaerobic.WorkoutManager
 import kotlinx.android.synthetic.main.fragment_workout.view.*
 
-class WorkoutTimerFragment(var interval: Interval) : Fragment() {
+class WorkoutTimerFragment(var interval: Interval, var workoutManager: WorkoutManager) : Fragment() {
 
     private lateinit var timer: CountDownTimer
     private var secondsTotal = interval.duration
@@ -62,6 +63,7 @@ class WorkoutTimerFragment(var interval: Interval) : Fragment() {
         progressBar.progress = 0
         timerTextView.text = "Done!"
         //TODO mark that the interval is completed
+        workoutManager.sessionCompleted()
     }
 
 }
