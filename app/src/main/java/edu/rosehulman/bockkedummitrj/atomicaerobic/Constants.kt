@@ -12,6 +12,7 @@ object Constants {
     const val FRAGMENT_TAG = "fragment"
     const val WORKOUT_TIMER_TAG = "workoutTimerFragment"
     const val WORKOUT_MANAGER_TAG = "WorkoutManager"
+    const val UID_TAG = "uid"
 
     val armWorkouts: List<String> = listOf<String>(
         "Windmills",

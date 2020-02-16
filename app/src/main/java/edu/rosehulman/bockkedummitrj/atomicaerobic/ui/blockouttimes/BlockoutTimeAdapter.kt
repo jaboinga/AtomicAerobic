@@ -27,7 +27,7 @@ class BlockoutTimeAdapter(var context: Context?, var userId: String) :
             .whereEqualTo("userId", userId)
             .addSnapshotListener { snapshot: QuerySnapshot?, exception: FirebaseFirestoreException? ->
                 if (exception != null) {
-                    Log.e(Constants.TAG, "Listen error: $exception")
+//                    Log.e(Constants.TAG, "Listen error: $exception")
                     return@addSnapshotListener
                 }
 
@@ -35,7 +35,6 @@ class BlockoutTimeAdapter(var context: Context?, var userId: String) :
                     val bt = BlockoutTime.fromSnapshot(docChange.document)
                     when (docChange.type) {
                         DocumentChange.Type.ADDED -> {
-                            Log.d(Constants.TAG, "blockout time added")
                             blockoutTimes.add(0, bt)
                             notifyItemInserted(0)
                         }

@@ -26,7 +26,7 @@ class SettingsFragment(var userId: String) : Fragment() {
             .whereEqualTo("userId", userId)
             .addSnapshotListener { snapshot: QuerySnapshot?, exception: FirebaseFirestoreException? ->
                 if (exception != null) {
-                    Log.wtf(Constants.TAG, "Listen error: $exception")
+//                    Log.wtf(Constants.TAG, "Listen error: $exception")
                     return@addSnapshotListener
                 }
 

@@ -29,20 +29,20 @@ class WorkoutManager(var userId: String, var context: Context) {
         FirebaseFirestore.getInstance().collection(Constants.BLOCKOUT_TIMES_COLLECTION)
     private val completedSessionsRef =
         FirebaseFirestore.getInstance().collection(Constants.COMPLETED_SESSIONS_COLLECTION)
+    private var completedSessionsId = "test"
 
     init {
         settingsRef
             .whereEqualTo("userId", userId)
             .addSnapshotListener { snapshot: QuerySnapshot?, exception: FirebaseFirestoreException? ->
                 if (exception != null) {
-                    Log.wtf(Constants.TAG, "Listen error: $exception")
+//                    Log.wtf(Constants.TAG, "Listen error: $exception")
                     return@addSnapshotListener
                 }
 
                 if (snapshot!!.documentChanges.size == 0) {
                     setting = Setting()
                     setting.userId = userId
-
                 }
 
                 for (docChange in snapshot!!.documentChanges) {
@@ -63,7 +63,7 @@ class WorkoutManager(var userId: String, var context: Context) {
             .whereEqualTo("userId", userId)
             .addSnapshotListener { snapshot: QuerySnapshot?, exception: FirebaseFirestoreException? ->
                 if (exception != null) {
-                    Log.e(Constants.TAG, "Listen error: $exception")
+//                    Log.e(Constants.TAG, "Listen error: $exception")
                     return@addSnapshotListener
                 }
 
@@ -84,7 +84,6 @@ class WorkoutManager(var userId: String, var context: Context) {
                             blockoutTimes[pos] = bt
                         }
                     }
-                    //TODO: update the intervals if needed here
                 }
             }
 
@@ -92,7 +91,7 @@ class WorkoutManager(var userId: String, var context: Context) {
             .whereEqualTo("userId", userId)
             .addSnapshotListener { snapshot: QuerySnapshot?, exception: FirebaseFirestoreException? ->
                 if (exception != null) {
-                    Log.wtf(Constants.TAG, "Listen error: $exception")
+//                    Log.wtf(Constants.TAG, "Listen error: $exception")
                     return@addSnapshotListener
                 }
 
@@ -105,6 +104,7 @@ class WorkoutManager(var userId: String, var context: Context) {
                 for (docChange in snapshot!!.documentChanges) {
                     val newCompletedSessions = CompletedSessions.fromSnapshot(docChange.document)
                     completedSessions = newCompletedSessions
+                    completedSessionsId = completedSessions.id
                 }
 
             }
@@ -133,12 +133,14 @@ class WorkoutManager(var userId: String, var context: Context) {
 
     fun inBlockoutTime(currentTime: Date): Boolean {
         blockoutTimes.forEach { time ->
+            //TODO this is a little broken maybe
             if (time.withinTime(currentTime)) return true
         }
         return false
     }
 
     fun getCurrentBlockoutTime(): BlockoutTime? {
+        //TODO this is a little broken maybe
         val currentTime = Calendar.getInstance().getTime()
         blockoutTimes.sortWith(kotlin.Comparator { first, second ->
             if (first.startHour == second.startHour) {
@@ -156,6 +158,7 @@ class WorkoutManager(var userId: String, var context: Context) {
     }
 
     fun getNextBlockoutTime(): BlockoutTime {
+        //TODO this is a little broken maybe
         val currentTime = Calendar.getInstance().getTime()
         blockoutTimes.sortWith(kotlin.Comparator { first, second ->
             if (first.startHour == second.startHour) {
@@ -235,6 +238,13 @@ class WorkoutManager(var userId: String, var context: Context) {
 
     fun sessionCompleted() {
         completedSessions.completedSessions++
+        completedSessionsRef.document(completedSessionsId).set(completedSessions)
+    }
+
+    fun reset(){
+        completedSessions.completedSessions = 0
+        completedSessionsRef.document(completedSessionsId).set(completedSessions)
+        createIntervals()
     }
 
 }

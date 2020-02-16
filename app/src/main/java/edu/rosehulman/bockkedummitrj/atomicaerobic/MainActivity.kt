@@ -1,7 +1,9 @@
 package edu.rosehulman.bockkedummitrj.atomicaerobic
 
+import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -19,6 +21,8 @@ import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.blockouttimes.BlockoutTime
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.blockouttimes.BlockoutTimesFragment
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.dashboard.DashboardFragment
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.settings.SettingsFragment
+import java.util.*
+
 
 class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedListener {
 
@@ -27,8 +31,8 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
     private val auth = FirebaseAuth.getInstance()
     private lateinit var authListener: FirebaseAuth.AuthStateListener
     private lateinit var adapter: BlockoutTimeAdapter
-    private lateinit var workoutManager: WorkoutManager
-    private lateinit var notificationManager: NotificationManager
+    lateinit var workoutManager: WorkoutManager
+    lateinit var notificationManager: NotificationManager
     private lateinit var navigationView: BottomNavigationView
     private var fragment: String? = null
 
@@ -145,6 +149,30 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
             ft.replace(R.id.fragment_container, HomeFragment())
             ft.commit()
         }
+
+        //Schedule the alarm
+        val calendar: Calendar = Calendar.getInstance().apply {
+            timeInMillis = System.currentTimeMillis()
+            set(Calendar.HOUR_OF_DAY, 23) //23
+            set(Calendar.MINUTE, 59) //59
+            set(Calendar.SECOND, 59) //59
+        }
+
+        val alarm = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alarmIntent = Intent(this, WorkoutResetReciever::class.java)
+        alarmIntent.putExtra(Constants.UID_TAG, uid)
+        val pendingIntent = PendingIntent.getBroadcast(this, 1, alarmIntent, 0)
+//        alarm.setExact(
+//            AlarmManager.RTC_WAKEUP,
+//            calendar.timeInMillis,
+//            pendingIntent
+//        )
+        alarm.setRepeating(
+            AlarmManager.RTC,
+            calendar.getTimeInMillis(),
+            1000 * 60 * 60 * 24,
+            pendingIntent
+        )
     }
 
     private fun launchLoginUI() {
