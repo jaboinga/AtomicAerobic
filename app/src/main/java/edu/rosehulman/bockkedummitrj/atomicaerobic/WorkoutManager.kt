@@ -19,9 +19,9 @@ class WorkoutManager(var userId: String, var context: Context) {
 
     private var setting: Setting = Setting()
     private var blockoutTimes: ArrayList<BlockoutTime> = ArrayList()
-    var completedSessions: CompletedSessions = CompletedSessions()
-    var totalSessions: Int = 500
-    var intervals: ArrayList<Interval> = ArrayList()
+    private var completedSessions: CompletedSessions = CompletedSessions()
+    private var totalSessions: Int = 500
+    private var intervals: ArrayList<Interval> = ArrayList()
 
     private val settingsRef =
         FirebaseFirestore.getInstance().collection(Constants.SETTINGS_COLLECTION)
@@ -87,9 +87,10 @@ class WorkoutManager(var userId: String, var context: Context) {
                     //TODO: update the intervals if needed here
                 }
             }
+
         completedSessionsRef
             .whereEqualTo("userId", userId)
-            .addSnapshotListener{snapshot: QuerySnapshot?, exception: FirebaseFirestoreException? ->
+            .addSnapshotListener { snapshot: QuerySnapshot?, exception: FirebaseFirestoreException? ->
                 if (exception != null) {
                     Log.wtf(Constants.TAG, "Listen error: $exception")
                     return@addSnapshotListener
@@ -98,13 +99,12 @@ class WorkoutManager(var userId: String, var context: Context) {
                 if (snapshot!!.documentChanges.size == 0) {
                     completedSessions = CompletedSessions()
                     completedSessions.userId = userId
-
+                    completedSessionsRef.add(setting)
                 }
 
                 for (docChange in snapshot!!.documentChanges) {
                     val newCompletedSessions = CompletedSessions.fromSnapshot(docChange.document)
                     completedSessions = newCompletedSessions
-
                 }
 
             }

@@ -1,53 +1,108 @@
 package edu.rosehulman.bockkedummitrj.atomicaerobic
 
-import android.app.*
-import android.content.ComponentName
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.os.SystemClock
-import android.preference.PreferenceManager
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationCompat
 import com.firebase.ui.auth.AuthUI
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
+import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.HomeFragment
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.SplashFragment
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.WorkoutTimerFragment
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.blockouttimes.BlockoutTimeAdapter
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.blockouttimes.BlockoutTimesFragment
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.dashboard.DashboardFragment
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.settings.SettingsFragment
-import java.util.*
-
 
 class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedListener {
 
     // Authentication
     private val RC_SIGN_IN = 1
     private val auth = FirebaseAuth.getInstance()
-    lateinit var authListener: FirebaseAuth.AuthStateListener
-    lateinit var adapter: BlockoutTimeAdapter
-    lateinit var workoutManager: WorkoutManager
-    lateinit var notificationManager: NotificationManager
+    private lateinit var authListener: FirebaseAuth.AuthStateListener
+    private lateinit var adapter: BlockoutTimeAdapter
+    private lateinit var workoutManager: WorkoutManager
+    private lateinit var notificationManager: NotificationManager
+    private lateinit var navigationView: BottomNavigationView
+    private var fragment: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        initializeListeners()
 
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         createNotificationChannel()
 
-        initializeListeners()
+        navigationView = findViewById(R.id.bottom_nav_bar)
+        fragment = intent.getStringExtra(Constants.FRAGMENT_TAG)
+    }
 
-        val navView: BottomNavigationView = findViewById(R.id.bottom_nav_bar)
+    override fun onStart() {
+        super.onStart()
+        auth.addAuthStateListener(authListener)
+    }
 
-        navView.setOnNavigationItemSelectedListener { item ->
+    override fun onStop() {
+        super.onStop()
+        auth.removeAuthStateListener(authListener)
+    }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+
+            R.id.action_logout -> {
+                logoutUser()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun logoutUser() {
+        auth.signOut()
+    }
+
+    override fun onLoginButtonPressed() {
+        launchLoginUI()
+    }
+
+    private fun initializeListeners() {
+        authListener = FirebaseAuth.AuthStateListener {
+            val user = it.currentUser
+            if (user != null) {
+                startApplication(user.uid)
+                //After init code, make sure the fragment is null to reset
+                fragment = null
+            } else {
+                switchToSplashFragment()
+            }
+        }
+    }
+
+    private fun switchToSplashFragment() {
+        val ft = supportFragmentManager.beginTransaction()
+        ft.replace(R.id.fragment_container, SplashFragment())
+        ft.commit()
+    }
+
+    private fun startApplication(uid: String) {
+        //Initialize things
+        workoutManager = WorkoutManager(uid, this)
+
+        navigationView.setOnNavigationItemSelectedListener { item ->
             val ft = supportFragmentManager.beginTransaction()
             adapter = BlockoutTimeAdapter(this, auth.currentUser!!.uid)
             when (item.itemId) {
@@ -71,77 +126,25 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
             true
         }
 
-        val fragment = intent.getStringExtra(Constants.FRAGMENT_TAG)
+
+        //Switch to home fragment if we're not in a notification
         if (fragment != null) {
             if (fragment == Constants.WORKOUT_TIMER_TAG) {
                 val ft = supportFragmentManager.beginTransaction()
                 //TODO change to workout
-                Log.d(Constants.TAG, "workout manager is: ${workoutManager.toString()}")
-                ft.replace(R.id.fragment_container, WorkoutTimerFragment(Interval("Windmills", 3, 45, 450), workoutManager))
+                ft.replace(
+                    R.id.fragment_container,
+                    WorkoutTimerFragment(Interval("Windmills", 3, 45, 15), workoutManager)
+                )
                 ft.commit()
             }
+            //Reset
+            fragment = null
+        } else {
+            val ft = supportFragmentManager.beginTransaction()
+            ft.replace(R.id.fragment_container, HomeFragment())
+            ft.commit()
         }
-
-    }
-
-    override fun onStart() {
-        super.onStart()
-        auth.addAuthStateListener(authListener)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        auth.removeAuthStateListener(authListener)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-
-            R.id.action_logout -> {
-                logoutUser()
-                true
-            }
-            R.id.action_add_blockout_time -> {
-                adapter.showAddDialog()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    private fun logoutUser() {
-        auth.signOut()
-    }
-
-    override fun onLoginButtonPressed() {
-        launchLoginUI()
-    }
-
-    private fun initializeListeners() {
-        authListener = FirebaseAuth.AuthStateListener {
-            val user = it.currentUser
-            if (user != null) {
-                //TODO is this going to be a problem later? we need the workouts to persist
-                workoutManager = WorkoutManager(user.uid, this)
-            } else {
-                switchToSplashFragment()
-            }
-        }
-    }
-
-    private fun switchToSplashFragment() {
-        val ft = supportFragmentManager.beginTransaction()
-        ft.replace(R.id.fragment_container, SplashFragment())
-        ft.commit()
     }
 
     private fun launchLoginUI() {
@@ -157,7 +160,8 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
 
     private fun createNotificationChannel() {
         val importance = NotificationManager.IMPORTANCE_HIGH
-        val channel = NotificationChannel(Constants.CHANNEL_ID, getString(R.string.app_name), importance)
+        val channel =
+            NotificationChannel(Constants.CHANNEL_ID, getString(R.string.app_name), importance)
         channel.enableLights(true)
         channel.lightColor = Color.BLUE
         channel.enableVibration(true)
