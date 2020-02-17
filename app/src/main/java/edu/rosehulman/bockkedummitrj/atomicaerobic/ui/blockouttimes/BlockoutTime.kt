@@ -16,19 +16,6 @@ data class BlockoutTime(
 ) {
 
     fun withinTime(time: Date): Boolean {
-//        Log.wtf("after", time.after(
-//            Date(
-//                time.year,
-//                time.month,
-//                time.day,
-//                startHour,
-//                startMinutes
-//            )).toString())
-
-//        Log.wtf("before", (time.before(Date(time.year, time.month, time.day, endHour, endMinutes)).toString()))
-//
-//        Log.wtf("current hour", time.hours.toString())
-
         return time.after(
             Date(
                 time.year,

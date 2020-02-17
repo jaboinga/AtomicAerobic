@@ -94,7 +94,7 @@ class WorkoutManager(var userId: String, var context: Context) {
                 if (snapshot!!.documentChanges.size == 0) {
                     completedSessions = CompletedSessions()
                     completedSessions.userId = userId
-                    completedSessionsRef.add(setting)
+                    completedSessionsRef.add(completedSessions)
                 }
 
                 for (docChange in snapshot!!.documentChanges) {

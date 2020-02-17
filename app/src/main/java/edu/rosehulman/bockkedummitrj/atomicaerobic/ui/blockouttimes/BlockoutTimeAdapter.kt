@@ -27,7 +27,7 @@ class BlockoutTimeAdapter(var context: Context?, var userId: String) :
             .whereEqualTo("userId", userId)
             .addSnapshotListener { snapshot: QuerySnapshot?, exception: FirebaseFirestoreException? ->
                 if (exception != null) {
-//                    Log.e(Constants.TAG, "Listen error: $exception")
+                    Log.e(Constants.TAG, "Listen error in blockout times: $exception")
                     return@addSnapshotListener
                 }
 
@@ -37,6 +37,7 @@ class BlockoutTimeAdapter(var context: Context?, var userId: String) :
                         DocumentChange.Type.ADDED -> {
                             blockoutTimes.add(0, bt)
                             notifyItemInserted(0)
+                            notifyDataSetChanged()
                         }
 
                         DocumentChange.Type.REMOVED -> {
@@ -102,9 +103,6 @@ class BlockoutTimeAdapter(var context: Context?, var userId: String) :
                 )
                 add(time)
 
-                //TODO: figure out why this isn't updating in the view immediately
-                // Dr. Boutell please help: we can't figure out why our recycler view isn't updating on an add here
-                // The data does persist in the database after you change the fragment, but it just doesn't update immediately
             }
 
             builder.setNegativeButton(android.R.string.cancel, null)
