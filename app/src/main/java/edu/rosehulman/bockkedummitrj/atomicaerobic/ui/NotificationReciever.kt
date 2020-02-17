@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import edu.rosehulman.bockkedummitrj.atomicaerobic.Constants
 import edu.rosehulman.bockkedummitrj.atomicaerobic.Interval
@@ -24,6 +25,7 @@ class NotificationReciever : BroadcastReceiver() {
         createNotificationChannel()
         val displayIntent = Intent(context, MainActivity::class.java)
         val notification = getNotification(displayIntent, context)
+        Log.e("notification reciever", "sending notification")
         notificationManager.notify(101, notification)
 
     }
@@ -46,7 +48,7 @@ class NotificationReciever : BroadcastReceiver() {
         builder.setSmallIcon(R.drawable.weight_icon)
         builder.setChannelId(Constants.CHANNEL_ID)
         val pendingIntent =
-            PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+            PendingIntent.getActivity(context, 2, intent, 0)
         builder.setContentIntent(pendingIntent)
         return builder.build()
     }

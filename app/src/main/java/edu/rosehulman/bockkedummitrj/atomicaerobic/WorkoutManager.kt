@@ -1,6 +1,7 @@
 package edu.rosehulman.bockkedummitrj.atomicaerobic
 
 import android.content.Context
+import android.util.Log
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
@@ -94,7 +95,7 @@ class WorkoutManager(var userId: String, var context: Context) {
                 if (snapshot!!.documentChanges.size == 0) {
                     completedSessions = CompletedSessions()
                     completedSessions.userId = userId
-                    completedSessionsRef.add(setting)
+                    completedSessionsRef.add(completedSessions)
                 }
 
                 for (docChange in snapshot!!.documentChanges) {
@@ -139,12 +140,6 @@ class WorkoutManager(var userId: String, var context: Context) {
             .whereEqualTo("userId", userId)
             .get()
             .addOnSuccessListener { snapshot ->
-
-                if (snapshot!!.documentChanges.size == 0) {
-                    setting = Setting()
-                    setting.userId = userId
-                }
-
                 for (docChange in snapshot!!.documentChanges) {
                     val set = Setting.fromSnapshot(docChange.document)
                     setting = set
@@ -157,13 +152,13 @@ class WorkoutManager(var userId: String, var context: Context) {
                 }
 
                 removeAllIntervals()
-                val workouts = getPossibleWorkouts()
 
+                val workouts = getPossibleWorkouts()
                 for (i in 1..totalSessions) {
                     val interval = Interval(
                         workouts.random(),
-                        21,
-                        53 + i,
+                        11,
+                        49 + i,
                         if (setting.timePerSessionUnit == "seconds") {
                             setting.timePerSession.toLong()
                         } else {
@@ -176,10 +171,13 @@ class WorkoutManager(var userId: String, var context: Context) {
                 }
             }
 
+        Log.e("workout manager", "returning new intervals")
         return intervals
+
     }
 
     private fun removeAllIntervals() {
+        Log.e("workout manager", "removing all intervals")
         intervals.forEach {
             intervalsRef.document(it.id).delete()
         }

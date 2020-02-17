@@ -6,10 +6,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.NotificationReciever
-import java.lang.Thread.sleep
 import java.util.*
 
 class WorkoutResetReciever : BroadcastReceiver() {
@@ -17,25 +15,20 @@ class WorkoutResetReciever : BroadcastReceiver() {
     // Triggered by the Alarm periodically (starts the service to run task)
     override fun onReceive(context: Context, intent: Intent) {
         val uid = intent.getStringExtra(Constants.UID_TAG)!!
-        Log.e("uid", uid)
+        val ref = FirebaseFirestore.getInstance()
+            .collection(Constants.COMPLETED_SESSIONS_COLLECTION)
 
-        var ref: DocumentReference? = null
-
-        FirebaseFirestore.getInstance().collection(Constants.COMPLETED_SESSIONS_COLLECTION)
+        ref
             .whereEqualTo("userId", uid)
             .get()
             .addOnSuccessListener { snapshot ->
                 for (document in snapshot.documents) {
-                    ref = FirebaseFirestore.getInstance()
-                        .collection(Constants.COMPLETED_SESSIONS_COLLECTION).document(document.id)
+                    Log.e("resetting", "resetting it all!")
+                    ref.document(document.id).set(CompletedSessions(0, uid))
                 }
-
             }
-        Log.e("ref", ref.toString())
-        if (ref != null) ref?.set(CompletedSessions(0, uid))
 
         setupNotifications(uid, context)
-
     }
 
     private fun setupNotifications(uid: String, context: Context) {
@@ -52,12 +45,9 @@ class WorkoutResetReciever : BroadcastReceiver() {
 
             val alarm = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             val alarmIntent = Intent(context, NotificationReciever::class.java)
-            val pendingIntent = PendingIntent.getBroadcast(context, 1, alarmIntent, 0)
-            alarm.setExact(
-                AlarmManager.RTC_WAKEUP,
-                calendar.timeInMillis,
-                pendingIntent
-            )
+            val pendingIntent =
+                PendingIntent.getBroadcast(context, 1, alarmIntent, 0)
+            alarm.set(AlarmManager.RTC, calendar.timeInMillis, pendingIntent)
         }
     }
 }

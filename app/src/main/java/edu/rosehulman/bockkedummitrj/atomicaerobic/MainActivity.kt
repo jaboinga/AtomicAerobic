@@ -24,6 +24,14 @@ import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.blockouttimes.BlockoutTime
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.dashboard.DashboardFragment
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.settings.SettingsFragment
 import java.util.*
+import android.R.id.edit
+import android.content.SharedPreferences
+import android.preference.PreferenceManager
+import androidx.core.app.ComponentActivity.ExtraData
+import androidx.core.content.ContextCompat.getSystemService
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+
+
 
 
 class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedListener {
@@ -40,6 +48,7 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
         initializeListeners()
 
@@ -160,24 +169,31 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
 
             }
 
-        //Schedule the alarm
-        calendar.apply {
-            timeInMillis = System.currentTimeMillis()
-            set(Calendar.HOUR_OF_DAY, 21) //23
-            set(Calendar.MINUTE, 52) //59
-            set(Calendar.SECOND, 0) //59
-        }
+        val prefs = getPreferences(Context.MODE_PRIVATE)
+        if (!prefs.getBoolean("firstTime", false)) {
+            calendar.apply {
+                timeInMillis = System.currentTimeMillis()
+                set(Calendar.HOUR_OF_DAY, 11) //23
+                set(Calendar.MINUTE, 49) //59
+                set(Calendar.SECOND, 0) //59
+            }
 
-        val alarm = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val alarmIntent = Intent(this, WorkoutResetReciever::class.java)
-        alarmIntent.putExtra(Constants.UID_TAG, uid)
-        val pendingIntent = PendingIntent.getBroadcast(this, 1, alarmIntent, 0)
-        alarm.setRepeating(
-            AlarmManager.RTC,
-            calendar.timeInMillis,
-            1000 * 60 * 60 * 24,
-            pendingIntent
-        )
+            val alarm = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val alarmIntent = Intent(this, WorkoutResetReciever::class.java)
+            alarmIntent.putExtra(Constants.UID_TAG, uid)
+            val pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0)
+            alarm.setRepeating(
+                AlarmManager.RTC,
+                calendar.timeInMillis,
+                AlarmManager.INTERVAL_DAY,
+                pendingIntent
+            )
+
+            // mark first time has ran.
+            val editor = prefs.edit()
+            editor.putBoolean("firstTime", true)
+            editor.apply()
+        }
     }
 
     private fun launchLoginUI() {
