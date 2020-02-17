@@ -30,8 +30,7 @@ import android.preference.PreferenceManager
 import androidx.core.app.ComponentActivity.ExtraData
 import androidx.core.content.ContextCompat.getSystemService
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-
-
+import android.view.WindowManager
 
 
 class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedListener {
@@ -158,6 +157,7 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
                         R.id.fragment_container,
                         WorkoutTimerFragment(interval!!, workoutManager)
                     )
+                    window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     ft.commitAllowingStateLoss()
                     //Reset
                     interval = null
@@ -173,8 +173,8 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
         if (!prefs.getBoolean("firstTime", false)) {
             calendar.apply {
                 timeInMillis = System.currentTimeMillis()
-                set(Calendar.HOUR_OF_DAY, 12) //23
-                set(Calendar.MINUTE, 34) //59
+                set(Calendar.HOUR_OF_DAY, 17) //23
+                set(Calendar.MINUTE, 28) //59
                 set(Calendar.SECOND, 0) //59
             }
 

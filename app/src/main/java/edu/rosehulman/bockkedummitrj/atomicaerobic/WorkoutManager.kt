@@ -1,11 +1,16 @@
 package edu.rosehulman.bockkedummitrj.atomicaerobic
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.util.Log
+import com.google.android.gms.tasks.SuccessContinuation
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.QuerySnapshot
+import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.NotificationReciever
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.blockouttimes.BlockoutTime
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.settings.Setting
 import java.util.*
@@ -135,59 +140,81 @@ class WorkoutManager(var userId: String, var context: Context) {
             }
     }
 
-    fun createIntervals(): ArrayList<Interval> {
-        val task = settingsRef
+    fun createIntervals() {
+        getNewSettings()
+        //Everything calls each other....
+    }
+
+    private fun getNewSettings(){
+        settingsRef
             .whereEqualTo("userId", userId)
             .get()
-
-        while (!task.isComplete) {
-        }
-
-        task.addOnSuccessListener { snapshot ->
-            for (docChange in snapshot!!.documentChanges) {
-                val set =
-                    edu.rosehulman.bockkedummitrj.atomicaerobic.ui.settings.Setting.fromSnapshot(
-                        docChange.document
-                    )
-                setting = set
-                totalSessions = if (setting.timePerSessionUnit == "seconds") {
-                    (setting.totalTime * 60) / setting.timePerSession
-                } else {
-                    //minutes
-                    (setting.totalTime / setting.timePerSession)
+            .addOnSuccessListener {
+                for(document in it!!.documents){
+                    val doc = Setting.fromSnapshot(document)
+                    setting = doc
                 }
+                removeAllIntervals()
             }
-
-            removeAllIntervals()
-
-            val workouts = getPossibleWorkouts()
-            for (i in 1..totalSessions) {
-                val interval = edu.rosehulman.bockkedummitrj.atomicaerobic.Interval(
-                    workouts.random(),
-                    12,
-                    34 + i,
-                    if (setting.timePerSessionUnit == "seconds") {
-                        setting.timePerSession.toLong()
-                    } else {
-                        (setting.timePerSession * 60).toLong()
-                    },
-                    userId
-                )
-                intervals.add(interval)
-                intervalsRef.add(interval)
-            }
-        }
-
-        while (!task.isComplete)
-            Log.e("Intervals", intervals.toString())
-
-        return intervals
 
     }
 
     private fun removeAllIntervals() {
-        intervals.forEach {
-            intervalsRef.document(it.id).delete()
+
+        intervalsRef
+            .whereEqualTo("userId", userId)
+            .get()
+            .addOnSuccessListener {
+                for(document in it!!.documents){
+                    val doc = Interval.fromSnapshot(document)
+                    intervalsRef.document(doc.id).delete()
+                }
+                createNewIntervals()
+            }
+//        intervals.forEach {
+//            intervalsRef.document(it.id).delete()
+//        }
+    }
+
+    private fun createNewIntervals(){
+        val workouts = getPossibleWorkouts()
+
+        for (i in 1..totalSessions) {
+            val interval = Interval(
+                workouts.random(),
+                17,
+                28 + i,
+                if (setting.timePerSessionUnit == "seconds") {
+                    setting.timePerSession.toLong()
+                } else {
+                    (setting.timePerSession * 60).toLong()
+                },
+                userId
+            )
+            intervals.add(interval)
+            intervalsRef.add(interval)
+        }
+
+        NotificationRunnable(intervals, context).run()
+    }
+
+    class NotificationRunnable(private var intervals : ArrayList<Interval>, private var context: Context) : Runnable{
+        override fun run() {
+            var count = 1
+            intervals.forEach {
+                val calendar: Calendar = Calendar.getInstance().apply {
+                    timeInMillis = System.currentTimeMillis()
+                    set(Calendar.HOUR_OF_DAY, it.hour)
+                    set(Calendar.MINUTE, it.minute)
+                    set(Calendar.SECOND, 0)
+                }
+
+                val alarm = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                val alarmIntent = Intent(context, NotificationReciever::class.java)
+                val pendingIntent =
+                    PendingIntent.getBroadcast(context, count++, alarmIntent, 0)
+                alarm.setExact(AlarmManager.RTC, calendar.timeInMillis, pendingIntent)
+            }
         }
 
     }

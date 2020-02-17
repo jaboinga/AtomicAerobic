@@ -46,6 +46,7 @@ class NotificationReciever : BroadcastReceiver() {
         builder.setContentTitle(context.getString(R.string.app_name))
         builder.setContentText(context.getString(R.string.notification_message))
         builder.setSmallIcon(R.drawable.weight_icon)
+        builder.setAutoCancel(true)
         builder.setChannelId(Constants.CHANNEL_ID)
         val pendingIntent =
             PendingIntent.getActivity(context, 2, intent, 0)
