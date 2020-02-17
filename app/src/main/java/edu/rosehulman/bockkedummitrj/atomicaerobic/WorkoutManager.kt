@@ -136,48 +136,56 @@ class WorkoutManager(var userId: String, var context: Context) {
     }
 
     fun createIntervals(): ArrayList<Interval> {
-        settingsRef
+        val task = settingsRef
             .whereEqualTo("userId", userId)
             .get()
-            .addOnSuccessListener { snapshot ->
-                for (docChange in snapshot!!.documentChanges) {
-                    val set = Setting.fromSnapshot(docChange.document)
-                    setting = set
-                    totalSessions = if (setting.timePerSessionUnit == "seconds") {
-                        (setting.totalTime * 60) / setting.timePerSession
-                    } else {
-                        //minutes
-                        (setting.totalTime / setting.timePerSession)
-                    }
-                }
 
-                removeAllIntervals()
+        while (!task.isComplete) {
+        }
 
-                val workouts = getPossibleWorkouts()
-                for (i in 1..totalSessions) {
-                    val interval = Interval(
-                        workouts.random(),
-                        11,
-                        49 + i,
-                        if (setting.timePerSessionUnit == "seconds") {
-                            setting.timePerSession.toLong()
-                        } else {
-                            (setting.timePerSession * 60).toLong()
-                        },
-                        userId
+        task.addOnSuccessListener { snapshot ->
+            for (docChange in snapshot!!.documentChanges) {
+                val set =
+                    edu.rosehulman.bockkedummitrj.atomicaerobic.ui.settings.Setting.fromSnapshot(
+                        docChange.document
                     )
-                    intervals.add(interval)
-                    intervalsRef.add(interval)
+                setting = set
+                totalSessions = if (setting.timePerSessionUnit == "seconds") {
+                    (setting.totalTime * 60) / setting.timePerSession
+                } else {
+                    //minutes
+                    (setting.totalTime / setting.timePerSession)
                 }
             }
 
-        Log.e("workout manager", "returning new intervals")
+            removeAllIntervals()
+
+            val workouts = getPossibleWorkouts()
+            for (i in 1..totalSessions) {
+                val interval = edu.rosehulman.bockkedummitrj.atomicaerobic.Interval(
+                    workouts.random(),
+                    12,
+                    34 + i,
+                    if (setting.timePerSessionUnit == "seconds") {
+                        setting.timePerSession.toLong()
+                    } else {
+                        (setting.timePerSession * 60).toLong()
+                    },
+                    userId
+                )
+                intervals.add(interval)
+                intervalsRef.add(interval)
+            }
+        }
+
+        while (!task.isComplete)
+            Log.e("Intervals", intervals.toString())
+
         return intervals
 
     }
 
     private fun removeAllIntervals() {
-        Log.e("workout manager", "removing all intervals")
         intervals.forEach {
             intervalsRef.document(it.id).delete()
         }
