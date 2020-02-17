@@ -11,6 +11,7 @@ import edu.rosehulman.bockkedummitrj.atomicaerobic.R
 import kotlinx.android.synthetic.main.blockout_times_recycler_view.view.*
 import kotlinx.android.synthetic.main.fragment_blockout_times_list.view.*
 
+private const val ARG_UID = "UID"
 class BlockoutTimesFragment(private var adapter: BlockoutTimeAdapter) : Fragment() {
 
     override fun onCreateView(
