@@ -5,13 +5,15 @@ object Constants {
     const val BLOCKOUT_TIMES_COLLECTION = "blockout_times"
     const val SETTINGS_COLLECTION = "settings"
     const val COMPLETED_SESSIONS_COLLECTION = "completed_sessions"
+    const val INTERVALS_COLLECTION = "intervals"
+
     const val DEFAULT_TOTAL_TIME = 60
     const val DEFAULT_TIME_PER_SESSION = 10
 
     const val CHANNEL_ID = "edu.rosehulman.bockkedummitrj.atomicaerobic"
-    const val FRAGMENT_TAG = "fragment"
     const val WORKOUT_TIMER_TAG = "workoutTimerFragment"
-    const val WORKOUT_MANAGER_TAG = "WorkoutManager"
+    const val WORKOUT_TIMER_TAG_TWO = "workoutTimerFragment2"
+
     const val UID_TAG = "uid"
 
     val armWorkouts: List<String> = listOf<String>(

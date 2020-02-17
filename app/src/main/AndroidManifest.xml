@@ -13,6 +13,10 @@
             android:name=".WorkoutResetReciever"
             android:enabled="true">
         </receiver>
+        <receiver
+            android:name=".ui.NotificationReciever"
+            android:enabled="true">
+        </receiver>
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name">

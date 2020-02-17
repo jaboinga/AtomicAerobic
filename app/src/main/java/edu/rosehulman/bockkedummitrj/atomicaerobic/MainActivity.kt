@@ -8,12 +8,14 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.firebase.ui.auth.AuthUI
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.HomeFragment
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.SplashFragment
 import edu.rosehulman.bockkedummitrj.atomicaerobic.ui.WorkoutTimerFragment
@@ -34,7 +36,7 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
     lateinit var workoutManager: WorkoutManager
     lateinit var notificationManager: NotificationManager
     private lateinit var navigationView: BottomNavigationView
-    private var fragment: String? = null
+    private var interval: Interval? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +47,6 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
         createNotificationChannel()
 
         navigationView = findViewById(R.id.bottom_nav_bar)
-        fragment = intent.getStringExtra(Constants.FRAGMENT_TAG)
     }
 
     override fun onStart() {
@@ -88,8 +89,6 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
             val user = it.currentUser
             if (user != null) {
                 startApplication(user.uid)
-                //After init code, make sure the fragment is null to reset
-                fragment = null
             } else {
                 switchToSplashFragment()
             }
@@ -125,51 +124,57 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
                 else -> super.onOptionsItemSelected(item)
             }
             ft.commit()
-            //TODO remove this
-            notifyNow()
             true
         }
 
+        var calendar: Calendar = Calendar.getInstance()
+        val ref = FirebaseFirestore.getInstance().collection(Constants.INTERVALS_COLLECTION)
 
-        //Switch to home fragment if we're not in a notification
-        if (fragment != null) {
-            if (fragment == Constants.WORKOUT_TIMER_TAG) {
-                val ft = supportFragmentManager.beginTransaction()
-                //TODO change to workout
-                ft.replace(
-                    R.id.fragment_container,
-                    WorkoutTimerFragment(Interval("Windmills", 3, 45, 15), workoutManager)
-                )
-                ft.commit()
+        ref
+            .whereEqualTo("userId", uid)
+            .whereEqualTo("hour", calendar.get(Calendar.HOUR_OF_DAY))
+            .whereEqualTo("minute", calendar.get(Calendar.MINUTE))
+            .get()
+            .addOnSuccessListener {
+                for (doc in it.documents) {
+                    interval = Interval.fromSnapshot(doc)
+                    Log.e("interval", interval.toString())
+                    ref.document(interval!!.id).delete()
+                }
+
+                //Switch to home interval if we're not in a notification
+                if (interval != null) {
+                    val ft = supportFragmentManager.beginTransaction()
+                    ft.replace(
+                        R.id.fragment_container,
+                        WorkoutTimerFragment(interval!!, workoutManager)
+                    )
+                    ft.commitAllowingStateLoss()
+                    //Reset
+                    interval = null
+                } else {
+                    val ft = supportFragmentManager.beginTransaction()
+                    ft.replace(R.id.fragment_container, HomeFragment())
+                    ft.commitAllowingStateLoss()
+                }
+
             }
-            //Reset
-            fragment = null
-        } else {
-            val ft = supportFragmentManager.beginTransaction()
-            ft.replace(R.id.fragment_container, HomeFragment())
-            ft.commit()
-        }
 
         //Schedule the alarm
-        val calendar: Calendar = Calendar.getInstance().apply {
+        calendar.apply {
             timeInMillis = System.currentTimeMillis()
-            set(Calendar.HOUR_OF_DAY, 23) //23
-            set(Calendar.MINUTE, 59) //59
-            set(Calendar.SECOND, 59) //59
+            set(Calendar.HOUR_OF_DAY, 21) //23
+            set(Calendar.MINUTE, 52) //59
+            set(Calendar.SECOND, 0) //59
         }
 
         val alarm = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val alarmIntent = Intent(this, WorkoutResetReciever::class.java)
         alarmIntent.putExtra(Constants.UID_TAG, uid)
         val pendingIntent = PendingIntent.getBroadcast(this, 1, alarmIntent, 0)
-//        alarm.setExact(
-//            AlarmManager.RTC_WAKEUP,
-//            calendar.timeInMillis,
-//            pendingIntent
-//        )
         alarm.setRepeating(
             AlarmManager.RTC,
-            calendar.getTimeInMillis(),
+            calendar.timeInMillis,
             1000 * 60 * 60 * 24,
             pendingIntent
         )
@@ -195,13 +200,6 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
         channel.enableVibration(true)
         channel.vibrationPattern = longArrayOf(100, 200, 300, 400, 500, 400, 300, 200, 400)
         notificationManager.createNotificationChannel(channel)
-    }
-
-    private fun notifyNow() {
-        val displayIntent = Intent(this, MainActivity::class.java)
-        displayIntent.putExtra(Constants.FRAGMENT_TAG, Constants.WORKOUT_TIMER_TAG)
-        val notification = workoutManager.getNotification(displayIntent)
-        notificationManager.notify(101, notification)
     }
 
 

@@ -1,10 +1,6 @@
 package edu.rosehulman.bockkedummitrj.atomicaerobic
 
-import android.app.Notification
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
-import android.util.Log
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
@@ -29,6 +25,8 @@ class WorkoutManager(var userId: String, var context: Context) {
         FirebaseFirestore.getInstance().collection(Constants.BLOCKOUT_TIMES_COLLECTION)
     private val completedSessionsRef =
         FirebaseFirestore.getInstance().collection(Constants.COMPLETED_SESSIONS_COLLECTION)
+    private val intervalsRef =
+        FirebaseFirestore.getInstance().collection(Constants.INTERVALS_COLLECTION)
     private var completedSessionsId = "test"
 
     init {
@@ -54,8 +52,6 @@ class WorkoutManager(var userId: String, var context: Context) {
                         //minutes
                         (setting.totalTime / setting.timePerSession)
                     }
-                    //TODO: update the intervals from here
-                    createIntervals()
                 }
             }
 
@@ -108,27 +104,86 @@ class WorkoutManager(var userId: String, var context: Context) {
                 }
 
             }
+
+        intervalsRef
+            .whereEqualTo("userId", userId)
+            .addSnapshotListener { snapshot: QuerySnapshot?, exception: FirebaseFirestoreException? ->
+                if (exception != null) {
+//                    Log.e(Constants.TAG, "Listen error: $exception")
+                    return@addSnapshotListener
+                }
+
+                for (docChange in snapshot!!.documentChanges) {
+                    val int = Interval.fromSnapshot(docChange.document)
+                    when (docChange.type) {
+                        DocumentChange.Type.ADDED -> {
+                            intervals.add(0, int)
+                        }
+
+                        DocumentChange.Type.REMOVED -> {
+                            val pos = intervals.indexOfFirst { int.id == it.id }
+                            intervals.removeAt(pos)
+                        }
+
+                        DocumentChange.Type.MODIFIED -> {
+                            val pos = intervals.indexOfFirst { int.id == it.id }
+                            intervals[pos] = int
+                        }
+                    }
+                }
+            }
     }
 
-    private fun createIntervals() {
-        intervals.clear()
+    fun createIntervals(): ArrayList<Interval> {
+        settingsRef
+            .whereEqualTo("userId", userId)
+            .get()
+            .addOnSuccessListener { snapshot ->
 
-        val workouts = getPossibleWorkouts()
-
-        for (i in 1..totalSessions) {
-            //TODO change to real times based on blockouts
-            var interval = Interval(
-                workouts.random(),
-                12,
-                0,
-                if (setting.timePerSessionUnit == "seconds") {
-                    setting.timePerSession.toLong()
-                } else {
-                    (setting.timePerSession * 60).toLong()
+                if (snapshot!!.documentChanges.size == 0) {
+                    setting = Setting()
+                    setting.userId = userId
                 }
-            )
-            intervals.add(interval)
+
+                for (docChange in snapshot!!.documentChanges) {
+                    val set = Setting.fromSnapshot(docChange.document)
+                    setting = set
+                    totalSessions = if (setting.timePerSessionUnit == "seconds") {
+                        (setting.totalTime * 60) / setting.timePerSession
+                    } else {
+                        //minutes
+                        (setting.totalTime / setting.timePerSession)
+                    }
+                }
+
+                removeAllIntervals()
+                val workouts = getPossibleWorkouts()
+
+                for (i in 1..totalSessions) {
+                    val interval = Interval(
+                        workouts.random(),
+                        21,
+                        53 + i,
+                        if (setting.timePerSessionUnit == "seconds") {
+                            setting.timePerSession.toLong()
+                        } else {
+                            (setting.timePerSession * 60).toLong()
+                        },
+                        userId
+                    )
+                    intervals.add(interval)
+                    intervalsRef.add(interval)
+                }
+            }
+
+        return intervals
+    }
+
+    private fun removeAllIntervals() {
+        intervals.forEach {
+            intervalsRef.document(it.id).delete()
         }
+
     }
 
     fun inBlockoutTime(currentTime: Date): Boolean {
@@ -224,27 +279,9 @@ class WorkoutManager(var userId: String, var context: Context) {
         return timeLeft
     }
 
-    fun getNotification(intent: Intent): Notification {
-        val builder = Notification.Builder(context, Constants.CHANNEL_ID)
-        builder.setContentTitle(context.getString(R.string.app_name))
-        builder.setContentText(context.getString(R.string.notification_message))
-        builder.setSmallIcon(R.drawable.weight_icon)
-        builder.setChannelId(Constants.CHANNEL_ID)
-        val pendingIntent =
-            PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-        builder.setContentIntent(pendingIntent)
-        return builder.build()
-    }
-
     fun sessionCompleted() {
         completedSessions.completedSessions++
         completedSessionsRef.document(completedSessionsId).set(completedSessions)
-    }
-
-    fun reset(){
-        completedSessions.completedSessions = 0
-        completedSessionsRef.document(completedSessionsId).set(completedSessions)
-        createIntervals()
     }
 
 }
