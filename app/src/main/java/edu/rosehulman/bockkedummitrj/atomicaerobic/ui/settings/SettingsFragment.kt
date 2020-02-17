@@ -106,12 +106,6 @@ class SettingsFragment(var userId: String) : Fragment() {
 
         }
 
-        root.randomization_checkbox.setOnClickListener {
-            setting.randomization = root.randomization_checkbox.isChecked
-            settingsRef.document(documentID).set(setting)
-
-        }
-
     }
 
     inner class SpinnerListener : AdapterView.OnItemSelectedListener {
@@ -140,7 +134,6 @@ class SettingsFragment(var userId: String) : Fragment() {
         root.workout_type_cardio_checkbox.isChecked = setting.workoutCardio
         root.workout_type_core_checkbox.isChecked = setting.workoutCore
         root.workout_type_legs_checkbox.isChecked = setting.workoutLegs
-        root.randomization_checkbox.isChecked = setting.randomization
     }
 }
 

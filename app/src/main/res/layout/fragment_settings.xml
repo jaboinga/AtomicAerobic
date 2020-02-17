@@ -178,33 +178,6 @@
                 android:text="@string/cardio" />
         </LinearLayout>
 
-        <!--    Randomization-->
-        <TextView
-            android:id="@+id/setting_randomization_title"
-            style="@style/SubHeaderStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:text="@string/randomization" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <CheckBox
-                android:id="@+id/randomization_checkbox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/randomization_description"
-                style="@style/SmallTextStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/randomization_description" />
-        </LinearLayout>
-
     </LinearLayout>
 
 
