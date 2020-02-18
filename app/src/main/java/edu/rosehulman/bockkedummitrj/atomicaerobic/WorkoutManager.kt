@@ -197,10 +197,15 @@ class WorkoutManager(var userId: String, var context: Context) {
     private fun getRandomTime(): Calendar {
         val rightNow = Calendar.getInstance()
         val currentHour = rightNow.get(Calendar.HOUR_OF_DAY)
+        val currentMinute = rightNow.get(Calendar.MINUTE)
 
         while (true) {
             val randomHour = (currentHour..23).random()
-            val randomMinute = (0..59).random()
+            var randomMinute = (0..59).random()
+
+            if(randomHour == currentHour){
+                randomMinute = ((currentMinute + 1)..59).random()
+            }
 
             val interval = Calendar.getInstance().apply {
                 set(Calendar.HOUR_OF_DAY, randomHour)

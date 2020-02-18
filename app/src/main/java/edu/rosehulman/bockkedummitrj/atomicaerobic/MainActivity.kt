@@ -135,9 +135,10 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
             true
         }
 
-        var calendar: Calendar = Calendar.getInstance()
+        val calendar: Calendar = Calendar.getInstance()
         val ref = FirebaseFirestore.getInstance().collection(Constants.INTERVALS_COLLECTION)
 
+        // You can only do the workout during the minute you were sent the notification :)
         ref
             .whereEqualTo("userId", uid)
             .whereEqualTo("hour", calendar.get(Calendar.HOUR_OF_DAY))
@@ -173,9 +174,9 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
         if (!prefs.getBoolean("firstTime", false)) {
             calendar.apply {
                 timeInMillis = System.currentTimeMillis()
-                set(Calendar.HOUR_OF_DAY, 18) //23
-                set(Calendar.MINUTE, 16) //59
-                set(Calendar.SECOND, 0) //59
+                set(Calendar.HOUR_OF_DAY, 23)
+                set(Calendar.MINUTE, 59)
+                set(Calendar.SECOND, 59)
             }
 
             val alarm = getSystemService(Context.ALARM_SERVICE) as AlarmManager

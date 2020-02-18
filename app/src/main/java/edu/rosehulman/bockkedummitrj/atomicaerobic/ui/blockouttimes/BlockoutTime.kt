@@ -1,6 +1,5 @@
 package edu.rosehulman.bockkedummitrj.atomicaerobic.ui.blockouttimes
 
-import android.util.Log
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Exclude
@@ -26,7 +25,8 @@ data class BlockoutTime(
             set(Calendar.MINUTE, endMinutes)
         }
 
-        return time.after(startTime) && time.before(endTime)
+        return (time.after(startTime) && time.before(endTime))
+                || (time.get(Calendar.HOUR_OF_DAY) == startHour && time.get(Calendar.MINUTE) == startMinutes)
     }
 
     @get:Exclude
