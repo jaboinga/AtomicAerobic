@@ -4,8 +4,6 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.util.Log
-import com.google.android.gms.tasks.SuccessContinuation
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
@@ -145,12 +143,12 @@ class WorkoutManager(var userId: String, var context: Context) {
         //Everything calls each other....
     }
 
-    private fun getNewSettings(){
+    private fun getNewSettings() {
         settingsRef
             .whereEqualTo("userId", userId)
             .get()
             .addOnSuccessListener {
-                for(document in it!!.documents){
+                for (document in it!!.documents) {
                     val doc = Setting.fromSnapshot(document)
                     setting = doc
                 }
@@ -165,25 +163,23 @@ class WorkoutManager(var userId: String, var context: Context) {
             .whereEqualTo("userId", userId)
             .get()
             .addOnSuccessListener {
-                for(document in it!!.documents){
+                for (document in it!!.documents) {
                     val doc = Interval.fromSnapshot(document)
                     intervalsRef.document(doc.id).delete()
                 }
                 createNewIntervals()
             }
-//        intervals.forEach {
-//            intervalsRef.document(it.id).delete()
-//        }
     }
 
-    private fun createNewIntervals(){
+    private fun createNewIntervals() {
         val workouts = getPossibleWorkouts()
 
         for (i in 1..totalSessions) {
+            val time = getRandomTime()
             val interval = Interval(
                 workouts.random(),
-                17,
-                28 + i,
+                time.get(Calendar.HOUR_OF_DAY),
+                time.get(Calendar.MINUTE),
                 if (setting.timePerSessionUnit == "seconds") {
                     setting.timePerSession.toLong()
                 } else {
@@ -198,7 +194,27 @@ class WorkoutManager(var userId: String, var context: Context) {
         NotificationRunnable(intervals, context).run()
     }
 
-    class NotificationRunnable(private var intervals : ArrayList<Interval>, private var context: Context) : Runnable{
+    private fun getRandomTime(): Calendar {
+        val rightNow = Calendar.getInstance()
+        val currentHour = rightNow.get(Calendar.HOUR_OF_DAY)
+
+        while (true) {
+            val randomHour = (currentHour..23).random()
+            val randomMinute = (0..59).random()
+
+            val interval = Calendar.getInstance().apply {
+                set(Calendar.HOUR_OF_DAY, randomHour)
+                set(Calendar.MINUTE, randomMinute)
+            }
+            if (!inBlockoutTime(interval)) return interval
+        }
+
+    }
+
+    class NotificationRunnable(
+        private var intervals: ArrayList<Interval>,
+        private var context: Context
+    ) : Runnable {
         override fun run() {
             var count = 1
             intervals.forEach {
@@ -219,17 +235,15 @@ class WorkoutManager(var userId: String, var context: Context) {
 
     }
 
-    fun inBlockoutTime(currentTime: Date): Boolean {
+    fun inBlockoutTime(currentTime: Calendar): Boolean {
         blockoutTimes.forEach { time ->
-            //TODO this is a little broken maybe
             if (time.withinTime(currentTime)) return true
         }
         return false
     }
 
     fun getCurrentBlockoutTime(): BlockoutTime? {
-        //TODO this is a little broken maybe
-        val currentTime = Calendar.getInstance().getTime()
+        val currentTime = Calendar.getInstance()
         blockoutTimes.sortWith(kotlin.Comparator { first, second ->
             if (first.startHour == second.startHour) {
                 first.startMinutes - second.startMinutes
@@ -246,8 +260,7 @@ class WorkoutManager(var userId: String, var context: Context) {
     }
 
     fun getNextBlockoutTime(): BlockoutTime {
-        //TODO this is a little broken maybe
-        val currentTime = Calendar.getInstance().getTime()
+        val currentTime = Calendar.getInstance()
         blockoutTimes.sortWith(kotlin.Comparator { first, second ->
             if (first.startHour == second.startHour) {
                 first.startMinutes - second.startMinutes
@@ -257,11 +270,11 @@ class WorkoutManager(var userId: String, var context: Context) {
         })
 
         for (time in blockoutTimes) {
-            if (time.startHour == currentTime.hours) {
-                if (time.startMinutes > currentTime.minutes) {
+            if (time.startHour == currentTime.get(Calendar.HOUR_OF_DAY)) {
+                if (time.startMinutes > currentTime.get(Calendar.MINUTE)) {
                     return time
                 }
-            } else if (time.startHour > currentTime.hours) {
+            } else if (time.startHour > currentTime.get(Calendar.HOUR_OF_DAY)) {
                 return time
             }
 
@@ -272,7 +285,7 @@ class WorkoutManager(var userId: String, var context: Context) {
 
 
     private fun getPossibleWorkouts(): List<String> {
-        var workouts = ArrayList<String>()
+        val workouts = ArrayList<String>()
 
         if (setting.workoutArms) {
             workouts.addAll(Constants.armWorkouts)

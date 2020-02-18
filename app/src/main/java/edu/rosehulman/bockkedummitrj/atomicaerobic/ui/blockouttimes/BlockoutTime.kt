@@ -15,17 +15,18 @@ data class BlockoutTime(
     var userId: String = ""
 ) {
 
-    fun withinTime(time: Date): Boolean {
-        return time.after(
-            Date(
-                time.year,
-                time.month,
-                time.day,
-                startHour,
-                startMinutes
-            )
-        ) && time.before(Date(time.year, time.month, time.day, endHour, endMinutes))
+    fun withinTime(time: Calendar): Boolean {
+        val startTime = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, startHour)
+            set(Calendar.MINUTE, startMinutes)
+        }
 
+        val endTime = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, endHour)
+            set(Calendar.MINUTE, endMinutes)
+        }
+
+        return time.after(startTime) && time.before(endTime)
     }
 
     @get:Exclude

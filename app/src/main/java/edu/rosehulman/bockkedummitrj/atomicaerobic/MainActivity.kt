@@ -173,8 +173,8 @@ class MainActivity : AppCompatActivity(), SplashFragment.OnLoginButtonPressedLis
         if (!prefs.getBoolean("firstTime", false)) {
             calendar.apply {
                 timeInMillis = System.currentTimeMillis()
-                set(Calendar.HOUR_OF_DAY, 17) //23
-                set(Calendar.MINUTE, 28) //59
+                set(Calendar.HOUR_OF_DAY, 18) //23
+                set(Calendar.MINUTE, 16) //59
                 set(Calendar.SECOND, 0) //59
             }
 

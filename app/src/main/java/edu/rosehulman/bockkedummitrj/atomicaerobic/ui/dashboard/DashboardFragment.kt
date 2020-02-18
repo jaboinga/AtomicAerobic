@@ -24,7 +24,7 @@ class DashboardFragment(var workoutManager: WorkoutManager) : Fragment() {
         root.progress_text_view.setText(workoutManager.getPercentCompleted().toString() + "% done")
         root.intervals_left_text.setText(workoutManager.getIntervalsLeft().toString())
         root.time_left_text.setText(workoutManager.getTimeLeft().toString())
-        val currentTime = Calendar.getInstance().getTime()
+        val currentTime = Calendar.getInstance()
         if(workoutManager.inBlockoutTime(currentTime)){
             var currentBlockoutTime = workoutManager.getCurrentBlockoutTime()
             var endMinutesString = currentBlockoutTime!!.endMinutes.toString()
@@ -32,15 +32,12 @@ class DashboardFragment(var workoutManager: WorkoutManager) : Fragment() {
             root.next_blockout_text.setText(currentBlockoutTime!!.endHour.toString() + ":" + endMinutesString)
             root.next_blockout_description.setText("this blockout ends")
         }else{
-            //TODO this isn't getting reached, need to fix
             var nextBlockoutTime = workoutManager.getNextBlockoutTime()
             var startMinutesString = nextBlockoutTime.startMinutes.toString()
             if(nextBlockoutTime.startMinutes < 10) startMinutesString = "0" + nextBlockoutTime.startMinutes.toString()
             root.next_blockout_text.setText(nextBlockoutTime.startHour.toString() + ":" + startMinutesString)
             root.next_blockout_description.setText("next blockout time")
         }
-
-        //TODO randomize the motivational statement
         return root
     }
 
